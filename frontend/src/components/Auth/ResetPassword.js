@@ -48,14 +48,31 @@ const Button = styled.button`
   }
 `;
 
+const Spinner = styled.div`
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #fff;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
 const ResetPasswordRequest = () => {
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setMessage('')
+    setLoading(true)
     setError('')
 
     try {
@@ -66,12 +83,14 @@ const ResetPasswordRequest = () => {
       }
     } catch (err) {
       if (err.response && err.response.data) {
-        setError(err.response.data.msg);
+        setError(err.response.data.msg)
       } else {
         setError('Erro no servidor, tente novamente mais tarde!')
       }
+    } finally {
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <Container>
@@ -88,7 +107,9 @@ const ResetPasswordRequest = () => {
           />
           {message && <p>{message}</p>}
           {error && <p>{error}</p>}
-          <Button type="submit">Enviar</Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? <Spinner /> : 'Enviar'}
+          </Button>
         </form>
 
       </ResetBox>

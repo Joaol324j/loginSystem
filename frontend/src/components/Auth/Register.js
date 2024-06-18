@@ -59,6 +59,21 @@ const RegisterLink = styled.div`
   }
 `;
 
+const Spinner = styled.div`
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #fff;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
 
 const Register = () => {
 
@@ -67,11 +82,13 @@ const Register = () => {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
 
     e.preventDefault()
+    setLoading(true)
     setError('')
 
     if(password !== confirmPassword){
@@ -138,7 +155,10 @@ const Register = () => {
 
             {error && <p>{error}</p>}
 
-          <Button type="submit">Cadastro</Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? <Spinner /> : 'Cadastro'}
+            </Button>
+
         </form>
 
         <RegisterLink onClick={() => navigate ('/login')}>

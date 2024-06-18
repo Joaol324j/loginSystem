@@ -49,6 +49,21 @@ const Button = styled.button`
   }
 `;
 
+const Spinner = styled.div`
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #fff;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
 const NewPassword = () => {
   const { token } = useParams()
   const navigate = useNavigate()
@@ -56,11 +71,13 @@ const NewPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e) => {
 
     e.preventDefault()
     setMessage('')
+    setLoading(true)
     setError('')
 
     if (password !== confirmPassword) {
@@ -86,6 +103,8 @@ const NewPassword = () => {
       } else {
         setError('Erro no servidor, tente novamente mais tarde!')
       }
+    } finally {
+      setLoading(true)
     }
 
   }
@@ -113,7 +132,9 @@ const NewPassword = () => {
           />
           {message && <p>{message}</p>}
           {error && <p>{error}</p>}
-          <Button type="submit">Redefinir Senha</Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? <Spinner /> : 'Redefinir Senha'}
+          </Button>
         </form>
 
       </ResetBox>

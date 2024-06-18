@@ -59,73 +59,89 @@ const RegisterLink = styled.div`
   }
 `;
 
+const Spinner = styled.div`
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #fff;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
 const Login = () => {
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [error, setError] = useState('')
-    const navigate = useNavigate()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
 
-    const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
 
-        e.preventDefault()
-
-        try {
-
-            const response = await axios.post('https://loginsystem-o5b9.onrender.com/api/auth/login', {email, password})
-            if(response.status === 200){
-                const { token } = response.data
-                localStorage.setItem('token', token)
-                navigate('/home')
-            }
-            
-        } catch (err) {
-
-            if(err.response && err.response.data){
-                setError(err.response.data.msg)
-            } else{
-                setError('Erro no servidor, tente novamente mais tarde!')
-            }
-            
-        }
+    try {
+      const response = await axios.post('https://loginsystem-o5b9.onrender.com/api/auth/login', { email, password })
+      if (response.status === 200) {
+        const { token } = response.data;
+        localStorage.setItem('token', token)
+        navigate('/home')
+      }
+    } catch (err) {
+      if (err.response && err.response.data) {
+        setError(err.response.data.msg);
+      } else {
+        setError('Erro no servidor, tente novamente mais tarde!')
+      }
+    } finally {
+      setLoading(false)
     }
+  }
 
-    return (
-        <Container>
-          <LoginBox>
-            <Title>Login</Title>
-            <form onSubmit={handleSubmit}>
+  return (
+    <Container>
+      <LoginBox>
+        <Title>Login</Title>
+        <form onSubmit={handleSubmit}>
+          <Input 
+            type="email" 
+            placeholder="Email" 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)}
+            required 
+          />
 
-              <Input 
-                type="email" 
-                placeholder="Email" 
-                value={email} 
-                onChange={(e) => setEmail(e.target.value)}
-                required />
+          <Input 
+            type="password" 
+            placeholder="Senha"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required 
+          />
 
-              <Input 
-                type="password" 
-                placeholder="Senha"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required />
+          {error && <p>{error}</p>}
+          
+          <Button type="submit" disabled={loading}>
+            {loading ? <Spinner /> : 'Login'}
+          </Button>
+        </form>
 
-                {error && <p>{error}</p>}
-
-              <Button type="submit">Login</Button>
-
-            </form>
-
-            <RegisterLink onClick={() => navigate('/register')}>
-              Não tem uma conta? Registre-se aqui
-            </RegisterLink>
-            <RegisterLink onClick={() => navigate('/reset-password')}>
-              Esqueceu a senha?
-            </RegisterLink>
-            
-          </LoginBox>
-        </Container>
-      )
-    }
+        <RegisterLink onClick={() => navigate('/register')}>
+          Não tem uma conta? Registre-se aqui
+        </RegisterLink>
+        <RegisterLink onClick={() => navigate('/reset-password')}>
+          Esqueceu a senha?
+        </RegisterLink>
+      </LoginBox>
+    </Container>
+  )
+}
 
 export default Login

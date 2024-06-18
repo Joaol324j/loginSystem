@@ -5,17 +5,19 @@ import Login from './components/Auth/Login'
 import Register from './components/Auth/Register'
 import ResetPassword from './components/Auth/ResetPassword'
 import NewPassword from './components/Auth/NewPassword'
+import PrivateRoute from './components/Routing/PrivateRoute'
+import PublicRoute from './components/Routing/PublicRoute'
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path='/home' element={<Home />}></Route>
-        <Route path='/login' element={<Login />}></Route>
-        <Route path='/register' element={<Register />}></Route>
-        <Route path='/reset-password' element={<ResetPassword />}></Route>
-        <Route path='/reset-password/:token' element={<NewPassword />}></Route>
-        <Route path='*' element={<Navigate to="/login" />}></Route>
+        <Route path='/home' element={<PrivateRoute element={<Home />} />} />
+        <Route path='/login' element={<PublicRoute element={<Login />} />} />
+        <Route path='/register' element={<PublicRoute element={<Register />} />} />
+        <Route path='/reset-password' element={<PublicRoute element={<ResetPassword />} />} />
+        <Route path='/reset-password/:token' element={<PublicRoute element={<NewPassword />} />} />
+        <Route path='*' element={<Navigate to="/login" />} />
       </Routes>
     </Router>
   )
