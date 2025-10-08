@@ -7,16 +7,16 @@ const app = express()
 
 app.use(bodyPaser.json())
 app.use(cors())
-app.use('/api/auth', require('./routes/auth'))
+app.use('/api/auth', require('./app/routes/auth'))
 
 app.get('/', (req, res) => {
     res.status(200).json({ msg: 'Bem Vindo a Nossa API!'})
 })
 
-const dbUser = process.env.DB_USER
-const dbPass = process.env.DB_PASS
+const DB_PORT = process.env.DB_PORT
+const DB_NAME = process.env.DB_NAME 
 
-mongoose.connect(`mongodb+srv://${dbUser}:${dbPass}@test.7ts2zqd.mongodb.net/?retryWrites=true&w=majority&appName=Test`)
+mongoose.connect(`mongodb://mongo:${DB_PORT}/${DB_NAME}`)
     .then(() => {
         app.listen(process.env.PORT)
         console.log('Conectado ao MongoDB')
